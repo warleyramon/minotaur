@@ -12,22 +12,20 @@ public class Minotaur extends Robot{
 		// setScanColor(Color.pink);
 
 		while(true) {
-			ahead(100);
-			turnGunRight(360);
-			back(100);
-			turnGunRight(360);
+			ahead(110);
+			turnRight(90);
 		}
 	}
 
 	public void onScannedRobot(ScannedRobotEvent e) {
-		fire(1);
+		fire(2);
 	}
 
 	public void onHitByBullet(HitByBulletEvent e) {
-		back(10);
+		back(50);
 	}
 	
 	public void onHitWall(HitWallEvent e) {
-		back(20);
+		back(50);
 	}	
 }

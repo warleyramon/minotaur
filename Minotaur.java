@@ -5,11 +5,11 @@ public class Minotaur extends Robot{
 	
 	public void run() {
 		
-		setBodyColor(Color.black);
-		setGunColor(Color.green);
-		setRadarColor(Color.silver);
-		setBulletColor(Color.pink);
-		setScanColor(Color.pink);
+		// setBodyColor(Color.black);
+		// setGunColor(Color.green);
+		// setRadarColor(Color.silver);
+		// setBulletColor(Color.pink);
+		// setScanColor(Color.pink);
 
 		while(true) {
 			ahead(100);

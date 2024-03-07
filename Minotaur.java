@@ -1,31 +1,37 @@
 package minotaur;
 import minotaur.*;
 import robocode.*;
-public class Minotaur extends Robot{
-	
+import java.awt.Color;
+
+
+public class Minotaur extends AdvancedRobot
+{
 	public void run() {
 		
-		// setBodyColor(Color.black);
-		// setGunColor(Color.green);
-		// setRadarColor(Color.silver);
-		// setBulletColor(Color.pink);
-		// setScanColor(Color.pink);
+        setBodyColor(Color.black);
+		setGunColor(Color.black);
+		setRadarColor(Color.green);
+		setBulletColor(Color.red);
+		setScanColor(Color.green);
 
 		while(true) {
-			ahead(110);
-			turnRight(90);
+			setAhead(100);
+			setTurnRight(10);
+			setTurnGunLeft(80);
+			execute();
 		}
 	}
+	
 
 	public void onScannedRobot(ScannedRobotEvent e) {
-		fire(2);
+		fire(7);
 	}
 
 	public void onHitByBullet(HitByBulletEvent e) {
-		back(50);
+		back(55);
 	}
 	
 	public void onHitWall(HitWallEvent e) {
-		back(50);
+		back(55);
 	}	
 }

@@ -8,7 +8,7 @@ public class Minotaur extends AdvancedRobot
 {
 	public void run() {
 		
-        setBodyColor(Color.black);
+		setBodyColor(Color.black);
 		setGunColor(Color.black);
 		setRadarColor(Color.green);
 		setBulletColor(Color.red);

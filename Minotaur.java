@@ -1,81 +1,73 @@
 package minotaur;
-import minotaur.*;
 import robocode.*;
+import robocode.util.*;
 import java.awt.Color;
+import java.util.HashMap;
+import java.awt.geom.Point2D;
+
+public class Minotaur extends AdvancedRobot {
+    
+    private static final double MAX_DISTANCE = 1000;
+    private static final double BULLET_POWER = 2;
+	private double absoluteBearing;
+	private double enemyX;
+    private double enemyY;
+    private double enemyHeading;
+	private double enemyVelocity;
+	private double bulletPower;
 
 
-public class Minotaur extends AdvancedRobot{
-	boolean movingForward;
-	int dist = 50;
-	double turnGunAmt, angle;
+    public void run() {
+        setColors(
+				Color.black, 
+				Color.black,
+				Color.green);
+				
+        setAdjustGunForRobotTurn(true);
+        setAdjustRadarForGunTurn(true);
 
-	public void run() {
-		
-		setBodyColor(Color.black);
-		setGunColor(Color.black);
-		setRadarColor(Color.green);
-		setBulletColor(Color.red);
-		setScanColor(Color.green);
+        while (true) {
+            turnRadarRight(360);
+        }
+    }
 
-		while(true) {
-			setAhead(4000);
-			movingForward = true;
-			setTurnRight(10);
-			setTurnGunLeft(80);
-			execute();
-			
-		}
-	}
-	
+    public void onScannedRobot(ScannedRobotEvent e) {
+        double absoluteBearing = getHeadingRadians() + e.getBearingRadians();
+        double enemyX = getX() + e.getDistance() * Math.sin(absoluteBearing);
+        double enemyY = getY() + e.getDistance() * Math.cos(absoluteBearing);
+        double enemyHeading = e.getHeadingRadians();
+        double enemyVelocity = e.getVelocity();
+        double bulletPower = Math.min(BULLET_POWER, getEnergy() - 0.1);
 
-	public void onHitWall(HitWallEvent e) {
-		reverseDirection();
-	}
+        setTurnGunRightRadians(Utils.normalRelativeAngle(absoluteBearing - getGunHeadingRadians()));
+        
+		setFire(bulletPower);
 
-	public void reverseDirection() {
-		if (movingForward) {
-			setBack(4000);
-			setTurnRight(9);
-			setTurnGunLeft(80);
-			movingForward = false;
-			execute();
-		} else {
-			setAhead(4000);
-			setTurnRight(9);
-			setTurnGunLeft(80);
-			movingForward = true;
-			execute();
-		}
-	}
+        double deltaTime = 0;
+        double predictedX = enemyX, predictedY = enemyY;
+        while ((++deltaTime) * (20.0 - 3.0 * bulletPower) < Point2D.distance(getX(), getY(), predictedX, predictedY)){
+            predictedX += Math.sin(enemyHeading) * enemyVelocity;
+            predictedY += Math.cos(enemyHeading) * enemyVelocity;
+        }
 
-	public void onScannedRobot(ScannedRobotEvent e) {
-		if (e.getDistance() < 50 && getEnergy() > 50) {
-			fire(3);
-		} 
-		else {
-			fire(7);
-		}
-		scan();
-	}
+        double theta = Utils.normalAbsoluteAngle(Math.atan2(predictedX - getX(), predictedY - getY()));
+        
+		setTurnGunRightRadians(Utils.normalRelativeAngle(theta - getGunHeadingRadians()));
+        
+		setFire(bulletPower);
 
+        if (Math.random() < 0.5) {
+            setAhead(MAX_DISTANCE * Math.random());
+        } else {
+            setBack(MAX_DISTANCE * Math.random());
+        }
+    }
 
-	public void onHitByBullet(HitByBulletEvent e) {
-		turnRight(normalRelativeAngleDegrees(90 - (getHeading() - e.getHeading())));
+    public void onHitByBullet(HitByBulletEvent e) {
+        setBack(100);
+    }
 
-		ahead(dist);
-		dist *= -1;
-		scan();
-	}
-
-	public static double normalRelativeAngleDegrees(double angle) {
-		return (angle %= 360) >= 0 ? (angle < 180) ? angle : angle - 360 : (angle >= -180) ? angle : angle + 360;
-	}
-
-	public void onHitRobot(HitRobotEvent e) {
-		double turnGunAmt = normalRelativeAngleDegrees(e.getBearing() + getHeading() - getGunHeading());
-
-		turnGunRight(turnGunAmt);
-		fire(3);
-	}	
-	
+    public void onHitWall(HitWallEvent e) {
+        setBack(100);
+    }
 }

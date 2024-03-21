@@ -25,6 +25,9 @@ public class Minotaur extends AdvancedRobot {
 				
         setAdjustGunForRobotTurn(true);
         setAdjustRadarForGunTurn(true);
+        setAhead(4000);
+        setTurnRight(10);
+        execute();
 
         while (true) {
             turnRadarRight(360);
